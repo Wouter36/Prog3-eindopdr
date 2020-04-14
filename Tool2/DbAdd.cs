@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace tool2
 {
@@ -19,44 +17,45 @@ namespace tool2
             Ds = new DataSet();
             Ds.CaseSensitive = false;
 
-            DataTable provTbl = new DataTable();
-            provTbl.TableName = "provincie";
+            DataTable provTbl = new DataTable("provincie");
             provTbl.Columns.Add(new DataColumn("ProvincieID", typeof(int)));
             provTbl.Columns.Add(new DataColumn("ProvincieNaam", typeof(string)));
             Ds.Tables.Add(provTbl);
 
-            DataTable gemeenteTbl = new DataTable();
-            gemeenteTbl.TableName = "gemeente";
+            DataTable gemeenteTbl = new DataTable("gemeente");
             gemeenteTbl.Columns.Add(new DataColumn("GemeenteID", typeof(int)));
             gemeenteTbl.Columns.Add(new DataColumn("GemeenteNaam", typeof(string)));
             gemeenteTbl.Columns.Add(new DataColumn("ProvincieID", typeof(int)));
             Ds.Tables.Add(gemeenteTbl);
 
-            DataTable straatTbl = new DataTable();
-            straatTbl.TableName = "straat";
+            DataTable straatTbl = new DataTable("straat");
             straatTbl.Columns.Add(new DataColumn("StraatID", typeof(int)));
             straatTbl.Columns.Add(new DataColumn("StraatNaam", typeof(string)));
             straatTbl.Columns.Add(new DataColumn("GemeenteID", typeof(int)));
             Ds.Tables.Add(straatTbl);
 
-            DataTable graafTbl = new DataTable();
-            graafTbl.TableName = "graaf";
+            DataTable graafTbl = new DataTable("graaf");
             graafTbl.Columns.Add(new DataColumn("GraafID", typeof(int)));
             graafTbl.Columns.Add(new DataColumn("StraatID", typeof(int)));
             Ds.Tables.Add(graafTbl);
 
-            DataTable SegmentTbl = new DataTable();
-            SegmentTbl.TableName = "segment";
+            DataTable SegmentTbl = new DataTable("segment");
             SegmentTbl.Columns.Add(new DataColumn("SegmentID", typeof(int)));
             SegmentTbl.Columns.Add(new DataColumn("GraafID", typeof(int)));
             Ds.Tables.Add(SegmentTbl);
 
-            DataTable KnoopTbl = new DataTable();
-            KnoopTbl.TableName = "knoop";
+            DataTable KnoopTbl = new DataTable("knoop");
             KnoopTbl.Columns.Add(new DataColumn("KnoopID", typeof(int)));
             KnoopTbl.Columns.Add(new DataColumn("SegmentID", typeof(int)));
             KnoopTbl.PrimaryKey = new DataColumn[] { KnoopTbl.Columns["KnoopID"] };
             Ds.Tables.Add(KnoopTbl);
+
+            DataTable PuntTbl = new DataTable("punt");
+            PuntTbl.Columns.Add(new DataColumn("X", typeof(decimal)));
+            PuntTbl.Columns.Add(new DataColumn("Y", typeof(decimal)));
+            PuntTbl.Columns.Add(new DataColumn("SegmentID", typeof(int)));
+            PuntTbl.Columns.Add(new DataColumn("KnoopID", typeof(int)));
+            Ds.Tables.Add(PuntTbl);
         }
 
         public void readProvincies()
@@ -69,14 +68,10 @@ namespace tool2
                 readProvincie(file.FullName);
             }
             ToDb();
-            Console.Read();
         }
-
+        
         private void readProvincie(string path)
         {
-            System.IO.StreamReader file = new System.IO.StreamReader(path);
-            string line;
-
             int werkProvincieId = -1;
             int werkGemeenteId = -1;
             int werkStraatId = -1;
@@ -84,7 +79,10 @@ namespace tool2
             int werkSegmentId = -1;
             int werkKnoopId = -1;
 
-            while ((line = file.ReadLine()) != null)
+            System.IO.StreamReader sReader = new System.IO.StreamReader(path);
+            string line;
+
+            while ((line = sReader.ReadLine()) != null)
             {
                 string[] elemnts = line.Split('*');
                 elemnts = elemnts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
@@ -93,7 +91,6 @@ namespace tool2
                 {
                     string provincieNaam = elemnts[1];
                     int provincieID = int.Parse(elemnts[2]);
-                    Console.WriteLine(provincieID);
                     Ds.Tables["provincie"].Rows.Add(provincieID, provincieNaam);
                     werkProvincieId = provincieID;
                 }
@@ -104,7 +101,7 @@ namespace tool2
                     Ds.Tables["gemeente"].Rows.Add(gemeenteID, gemeenteNaam, werkProvincieId);
                     werkGemeenteId = gemeenteID;
                 }
-                else if(elemnts[0].StartsWith("[straat]"))
+                else if (elemnts[0].StartsWith("[straat]"))
                 {
                     string straatNaam = elemnts[1];
                     int straatID = int.Parse(elemnts[2]);
@@ -133,12 +130,26 @@ namespace tool2
                         werkKnoopId = knoopID;
                     }
                 }
+                else if (elemnts[0].StartsWith("[punt]"))
+                {
+                    decimal x = Convert.ToDecimal(elemnts[1], CultureInfo.InvariantCulture);
+                    decimal y = Convert.ToDecimal(elemnts[2], CultureInfo.InvariantCulture);
+                    if(werkKnoopId >= 0)
+                    {
+                        Ds.Tables["punt"].Rows.Add(x, y, werkSegmentId, werkKnoopId);
+                        werkKnoopId = -1;
+                    }
+                    else
+                    {
+                        Ds.Tables["punt"].Rows.Add(x, y, werkSegmentId, null);
+                    }
+                }
             }
         }
 
         private void ToDb()
         {
-            string connectionString = @"Data Source=LAPTOP-353R5D9A\SQLEXPRESS;Initial Catalog=boeki;Integrated Security=True;Integrated Security=True;Connect Timeout=30";
+            string connectionString = ConfigurationManager.ConnectionStrings["connectStr"].ConnectionString;
             using (SqlBulkCopy sqlbc = new SqlBulkCopy(connectionString))
             {
                 try

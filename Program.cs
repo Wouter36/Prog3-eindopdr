@@ -16,7 +16,7 @@ namespace Prog3EindOpdracht
             {
                 System.IO.File.WriteAllText($"ProvincieFiles\\{provincie.Naam}.txt", provincie.ToString());
             }
-
+            Console.WriteLine("Klaar!");
             Console.Read();
         }
     }

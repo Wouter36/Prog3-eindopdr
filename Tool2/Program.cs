@@ -13,7 +13,7 @@ namespace tool2
         {
             DbAdd dbadd = new DbAdd();
             dbadd.readProvincies();
-
+            Console.WriteLine("Klaar!");
             Console.Read();
         }
     }

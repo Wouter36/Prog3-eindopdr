@@ -13,7 +13,7 @@ namespace Prog3EindOpdracht
         public int SegmentId { get; private set; }
         public Knoop BeginKnoop { get; set; }
         public Knoop EindKnoop { get; set; }
-        public List<Punt> Punten { get; set; }
+        private List<Punt> Punten { get; set; }
         private static Dictionary<int, List<Segment>> straatSegmentenDict = new Dictionary<int, List<Segment>>();
         #endregion properties
 
@@ -29,7 +29,7 @@ namespace Prog3EindOpdracht
 
         private static void InitFullList(List<String[]> strDataList)
         {
-            var index = Utils.indexwrdata;
+            var index = Config.indexwrdata;
 
             foreach (string[] strData in strDataList)
             {
@@ -95,13 +95,11 @@ namespace Prog3EindOpdracht
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-
             sb.Append("[segment]*");
             sb.Append(SegmentId);
             sb.Append(Environment.NewLine);
             sb.Append(BeginKnoop.ToString());
             sb.Append(EindKnoop.ToString());
-
             foreach (Punt punt in Punten)
             {
                 sb.Append(punt.ToString());

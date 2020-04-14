@@ -8,10 +8,10 @@ namespace Prog3EindOpdracht
     class Gemeente
     {
         #region props
-        List<Straat> straten = new List<Straat>();
-        public int GemeenteId { get; private set; }
-        public Provincie Provincie { get; set; }
+        private Provincie Provincie { get; set; }
+        public int GemeenteId { get; set; }
         public string GemeenteNaam { get; set; }
+        private List<Straat> straten = new List<Straat>();
         #endregion props
 
         #region constructor
@@ -25,20 +25,21 @@ namespace Prog3EindOpdracht
 
         public static List<Gemeente> GetGemeenteList(Provincie provincie)
         {
-            var provincieindex = Utils.indexprovincieinfo;
-            var gemeenteindex = Utils.indexwrgemeentenaam;
-            List<string[]> strListGemeentes = Utils.strListGemeentes;
-            List<string[]> Provincies = Utils.Provincies;
+            var provincieindex = Config.indexprovincieinfo;
+            var gemeenteindex = Config.indexwrgemeentenaam;
+            List<string[]> strListGemeentes = Config.strListGemeentes;
+            List<string[]> Provincies = Config.Provincies;
 
             List<Gemeente> gemeentes = new List<Gemeente>();
 
             foreach (string[] strGemeente in strListGemeentes)
             {
                 bool isInProvincie = 
-                    Provincies.Any(p => p[provincieindex["gemeenteid"]] == strGemeente[1] &&
+                    Provincies.Any(p => 
+                    p[provincieindex["gemeenteid"]] == strGemeente[gemeenteindex["gemeenteid"]] &&
                     p[provincieindex["provincieid"]] == provincie.ProvincieID.ToString());
 
-                if (strGemeente[2] == Utils.TaalCode && isInProvincie)
+                if (strGemeente[2] == Config.TaalCode && isInProvincie)
                 {
                     int gemeenteId = int.Parse(strGemeente[gemeenteindex["gemeenteid"]]);
                     string gemeenteNaam = strGemeente[gemeenteindex["gemeentenaam"]];
@@ -47,7 +48,6 @@ namespace Prog3EindOpdracht
                     gemeentes.Add(gemeente);
                 }
             }
-
             foreach(Gemeente gemeente in gemeentes)
             {
                 gemeente.straten = Straat.GetStraatList(gemeente);
@@ -63,7 +63,6 @@ namespace Prog3EindOpdracht
             sb.Append(GemeenteNaam);
             sb.Append("*");
             sb.Append(GemeenteId);
-
             sb.Append(Environment.NewLine);
             foreach (Straat straat in straten)
             {

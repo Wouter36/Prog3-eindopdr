@@ -9,9 +9,9 @@ namespace Prog3EindOpdracht
     class Graaf
     {
         #region properties
-        public int GraafId { get; private set; }
-        public Dictionary<Knoop, List<Segment>> KnoopSegmenten { get; set; }
         private static int HighestID;
+        private int GraafId { get; set; }
+        private Dictionary<Knoop, List<Segment>> KnoopSegmenten { get; set; }
         private static List<string[]> strListData;
         #endregion properties
 
@@ -25,11 +25,11 @@ namespace Prog3EindOpdracht
 
         public static Graaf GetInstance(int straatId)
         {
-            var index = Utils.indexwrdata;
+            var index = Config.indexwrdata;
 
             if (strListData == null)
             {
-                strListData = CSVReader.ReadInCSV(Utils.pathWRData, ';');
+                strListData = CSVReader.ReadCSV(Config.pathWRData, ';');
                 strListData = strListData.Where(line => 
                     line[index["linksstraatnaamid"]] != "-9" && line[index["rechtsstraatnaamid"]] != "-9").ToList();
                 strListData.RemoveAt(0);
@@ -61,14 +61,11 @@ namespace Prog3EindOpdracht
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-
             sb.Append("[graaf]*");
             sb.Append(GraafId);
             sb.Append(Environment.NewLine);
-
             foreach (KeyValuePair<Knoop, List<Segment>> kvp in KnoopSegmenten)
             {
-
                 foreach (Segment segment in kvp.Value)
                 {
                     sb.Append(segment.ToString());

@@ -9,10 +9,10 @@ namespace Prog3EindOpdracht
     class Straat
     {
         #region properties
-        public int StraatId { get; private set; }
-        public string StraatNaam { get; set; }
-        public Graaf Graaf { get; set; }
-        public Gemeente Gemeente { get; set; }
+        private Gemeente Gemeente { get; set; }
+        private int StraatId { get; set; }
+        private string StraatNaam { get; set; }
+        private Graaf Graaf { get; set; }
         #endregion properties
 
         #region constructor
@@ -26,14 +26,14 @@ namespace Prog3EindOpdracht
 
         public static List<Straat> GetStraatList(Gemeente gemeente)
         {
-            var idindex = Utils.indexwrgemeenteid;
-            List<string[]> straatGemeenteidsTemp = CSVReader.ReadInCSV(Utils.pathGemeenteStraatID, ';');
+            var idindex = Config.indexwrgemeenteid;
+            List<string[]> straatGemeenteidsTemp = Config.strListStraatGemeenteIds;
             straatGemeenteidsTemp.RemoveAt(0);
             IEnumerable<string[]> straatGemeenteIds = straatGemeenteidsTemp.
                 Where(e => e[idindex["gemeentenaamid"]] == gemeente.GemeenteId.ToString());
 
-            var index = Utils.indexwrstraatnamen;
-            List<string[]> strListStraatnamen = CSVReader.ReadInCSV(Utils.pathStraatNamen, ';');
+            var index = Config.indexwrstraatnamen;
+            List<string[]> strListStraatnamen = CSVReader.ReadCSV(Config.pathStraatNamen, ';');
             List<Straat> straten = new List<Straat>();
 
             foreach (string[] straatGemeenteId in straatGemeenteIds)

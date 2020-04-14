@@ -9,7 +9,7 @@ namespace Prog3EindOpdracht
 {
     class CSVReader
     {
-        public static List<string[]> ReadInCSV(string path, char separator)
+        public static List<string[]> ReadCSV(string path, char separator)
         {
             System.IO.StreamReader reader = new System.IO.StreamReader(path);
             List<string[]> list = new List<string[]>();

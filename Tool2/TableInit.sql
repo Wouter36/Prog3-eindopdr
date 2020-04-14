@@ -45,7 +45,7 @@ create table punt(
 
 X decimal NOT NULL,
 Y decimal NOT NULL,
-PuntID varchar(255) NOT NULL PRIMARY KEY,
 SegmentID int NOT NULL FOREIGN KEY REFERENCES segment(SegmentID),
-KnoopID int FOREIGN KEY REFERENCES knoop(KnoopID)
+KnoopID int FOREIGN KEY REFERENCES knoop(KnoopID),
+PuntID int NOT NULL IDENTITY(1,1) PRIMARY KEY
 );

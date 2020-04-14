@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Prog3EindOpdracht
 {
-    class Utils
+    class Config
     {
-        public static string[] vlaamseProvincieIds = CSVReader.ReadInCSV(pathVlaamseProvincies, ',').First();
-        public static List<string[]> Provincies = CSVReader.ReadInCSV(pathProvincieInfo, ';');
-        public static List<string[]> strListGemeentes = CSVReader.ReadInCSV(Utils.pathGemeentenaam, ';');
-
+        public static string[] vlaamseProvincieIds = CSVReader.ReadCSV(pathVlaamseProvincies, ',').First();
+        public static List<string[]> Provincies = CSVReader.ReadCSV(pathProvincieInfo, ';');
+        public static List<string[]> strListGemeentes = CSVReader.ReadCSV(pathGemeentenaam, ';');
+        public static List<string[]> strListStraatGemeenteIds = CSVReader.ReadCSV(pathGemeenteStraatID, ';');
 
         public const string TaalCode = "nl";
 

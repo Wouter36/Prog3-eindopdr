@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tool3
 {
@@ -46,90 +43,6 @@ namespace Tool3
             ToonHoofdMenu();
         }
 
-        private static void GeefStraatVanStraatEnGemeentenaam()
-        {
-            Console.WriteLine("Geef de gemeentenaam");
-            string gemeenteNaam = Console.ReadLine();
-
-            Console.WriteLine("Geef de straatnaam");
-            string straatNaam = Console.ReadLine();
-
-            string connectionString = ConfigurationManager.ConnectionStrings["connectStr"].ConnectionString;
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-
-                // Alle data ophalen
-                string gemeenteSql = $"SELECT GemeenteID, ProvincieID FROM gemeente WHERE GemeenteNaam = '{gemeenteNaam}';";
-                int gemeenteID;
-                int provincieID;
-                using (SqlCommand cmd = new SqlCommand(gemeenteSql, conn))
-                {
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    reader.Read();
-                    gemeenteID = reader.GetInt32(0);
-                    provincieID = reader.GetInt32(1);
-                    reader.Close();
-                };
-                string provincieSql = $"SELECT ProvincieNaam FROM provincie WHERE ProvincieID = '{provincieID}';";
-                String provincieNaam;
-                using (SqlCommand cmd = new SqlCommand(provincieSql, conn))
-                {
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    reader.Read();
-                    provincieNaam = reader.GetString(0);
-                    reader.Close();
-                };
-                string straatSql = $"SELECT StraatID FROM straat WHERE" +
-                    $" StraatNaam = '{straatNaam}' AND GemeenteID = '{gemeenteID}' ;";
-                int straatID;
-                using (SqlCommand cmd = new SqlCommand(straatSql, conn))
-                {
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    reader.Read();
-                    straatID = reader.GetInt32(0);
-                    reader.Close();
-                };
-                string graafSql = $"SELECT GraafID FROM graaf WHERE StraatID = '{straatID}';";
-                int graafID;
-                using (SqlCommand cmd = new SqlCommand(graafSql, conn))
-                {
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    reader.Read();
-                    graafID = reader.GetInt32(0);
-                    reader.Close();
-                };
-                string segmentSql = $"SELECT SegmentID FROM segment WHERE GraafID = '{graafID}';";
-                int segmentID;
-                using (SqlCommand cmd = new SqlCommand(segmentSql, conn))
-                {
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    reader.Read();
-                    segmentID = reader.GetInt32(0);
-                    reader.Close();
-                };
-                //string puntSql = $"SELECT X, Y FROM punt WHERE SegmentID = '{segmentID}';";
-                //decimal x;
-                //decimal y;
-                //using (SqlCommand cmd = new SqlCommand(puntSql, conn))
-                //{
-                //    SqlDataReader reader = cmd.ExecuteReader();
-                //    Console.WriteLine(reader.HasRows);
-                //    reader.Read();
-                //    x = reader.GetDecimal(0);
-                //    y = reader.GetDecimal(1);
-                //    reader.Close();
-                //};
-                Console.WriteLine(provincieID + " " + provincieNaam);
-                Console.WriteLine(gemeenteID + " " + gemeenteNaam);
-                Console.WriteLine(straatID + " " + straatNaam);
-                Console.WriteLine(graafID);
-                Console.WriteLine(segmentID);
-                
-                conn.Close();
-            }
-        }
-
         private static void GeefAlleStraatNamenAlfabetisch()
         {
             Console.WriteLine("Geef de gemeentenaam");
@@ -138,19 +51,13 @@ namespace Tool3
             string connectionString = ConfigurationManager.ConnectionStrings["connectStr"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                conn.Open();
-
                 string gemeenteSql = $"SELECT GemeenteID FROM gemeente WHERE GemeenteNaam = '{gemeenteNaam}';";
                 int gemeenteID;
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand(gemeenteSql, conn))
                 {
                     gemeenteID = (int)cmd.ExecuteScalar();
-                };
-
-                string sql = $"SELECT StraatNaam FROM straat WHERE GemeenteID = '{gemeenteID}' ORDER BY StraatNaam ASC;";
-
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                {
+                    cmd.CommandText = $"SELECT StraatNaam FROM straat WHERE GemeenteID = '{gemeenteID}' ORDER BY StraatNaam ASC;";
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.HasRows)
@@ -167,8 +74,6 @@ namespace Tool3
                 }
                 conn.Close();
             }
-            Console.WriteLine("Druk op een toets");
-            Console.Read();
         }
 
         private static void GeefStraatIDVanStraatNaam()
@@ -189,8 +94,95 @@ namespace Tool3
 
                 Console.WriteLine(straatID);
             }
-            Console.WriteLine("Druk op een toets");
-            Console.Read();
+        }
+
+        private static void GeefStraatVanStraatEnGemeentenaam()
+        {
+            Console.WriteLine("Geef de gemeentenaam");
+            string gemeenteNaam = Console.ReadLine();
+
+            Console.WriteLine("Geef de straatnaam");
+            string straatNaam = Console.ReadLine();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["connectStr"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                int gemeenteID;
+                int provincieID;
+                String provincieNaam;
+                int straatID;
+                int graafID;
+                List<int> segmentIDs = new List<int>();
+                conn.Open();
+                // Alle data ophalen
+                try
+                {
+                    string gemeenteSql = $"SELECT GemeenteID, ProvincieID FROM gemeente WHERE GemeenteNaam = '{gemeenteNaam}';";
+                    SqlCommand cmd = new SqlCommand(gemeenteSql, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    reader.Read();
+                    gemeenteID = reader.GetInt32(0);
+                    provincieID = reader.GetInt32(1);
+                    reader.Close();
+                    cmd.CommandText = $"SELECT ProvincieNaam FROM provincie WHERE ProvincieID = '{provincieID}';";
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    provincieNaam = reader.GetString(0);
+                    reader.Close();
+                    cmd.CommandText = $"SELECT StraatID FROM straat WHERE StraatNaam = '{straatNaam}' AND GemeenteID = '{gemeenteID}' ;";
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    straatID = reader.GetInt32(0);
+                    reader.Close();
+                    cmd.CommandText = $"SELECT GraafID FROM graaf WHERE StraatID = '{straatID}';";
+                    reader = cmd.ExecuteReader();
+                    reader.Read();
+                    graafID = reader.GetInt32(0);
+                    reader.Close();
+                    cmd.CommandText = $"SELECT SegmentID FROM segment WHERE GraafID = '{graafID}';";
+                    reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        segmentIDs.Add(reader.GetInt32(0));
+                    }
+                    reader.Close();
+
+                    // starten met output o.a. van herhalende elementen
+                    Console.WriteLine("provincie: " + provincieID + " " + provincieNaam);
+                    Console.WriteLine("gemeente:" + gemeenteID + " " + gemeenteNaam);
+                    Console.WriteLine("straat: " + straatID + " " + straatNaam);
+                    Console.WriteLine("graaf: " + graafID);
+                    foreach (int segid in segmentIDs)
+                    {
+                        Console.WriteLine("segment: " + segid);
+                        cmd.CommandText = $"SELECT X, Y, KnoopID FROM punt WHERE SegmentID = '{segid}';";
+                        reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            if (!reader.IsDBNull(2))
+                            {
+                                Console.WriteLine("knoop: " + reader.GetInt32(2));
+                            }
+                            decimal x = reader.GetDecimal(0);
+                            decimal y = reader.GetDecimal(1);
+
+                            Console.WriteLine("punt: " + x + " " + y);
+                        }
+                        reader.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Er is een probleem opgetreden.");
+                    Console.WriteLine("Ben je zeker dat je alles juist hebt ingevoerd");
+                    Console.WriteLine("Fout: " + e.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
         }
 
         private static void GeefStraatIDsVanGemeenteNaam()
@@ -201,21 +193,14 @@ namespace Tool3
             string connectionString = ConfigurationManager.ConnectionStrings["connectStr"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                conn.Open();
-
                 string gemeenteSql = $"SELECT GemeenteID FROM gemeente WHERE GemeenteNaam = '{gemeenteNaam}';";
                 int gemeenteID;
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand(gemeenteSql, conn))
                 {
                     gemeenteID = (int)cmd.ExecuteScalar();
-                };
-
-                string sql = $"SELECT StraatID FROM straat WHERE GemeenteID = '{gemeenteID}';";
-
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                {
+                    cmd.CommandText = $"SELECT StraatID FROM straat WHERE GemeenteID = '{gemeenteID}';";
                     SqlDataReader reader = cmd.ExecuteReader();
-
                     if (reader.HasRows)
                     {
                         while (reader.Read())
@@ -230,8 +215,6 @@ namespace Tool3
                 }
                 conn.Close();
             }
-            Console.WriteLine("Druk op een toets");
-            Console.Read();
         }
     }
 }

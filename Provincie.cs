@@ -9,9 +9,9 @@ namespace Prog3EindOpdracht
     class Provincie
     {
         #region properties
-        public int ProvincieID { get; private set; }
-        public string Naam { get; set; }
-        List<Gemeente> Gemeentes = new List<Gemeente>();
+        public int ProvincieID { get; set; }
+        private string Naam { get; set; }
+        private List<Gemeente> Gemeentes = new List<Gemeente>();
         #endregion properties
 
         #region constructor
@@ -25,23 +25,19 @@ namespace Prog3EindOpdracht
 
         public static List<Provincie> GetProvincieList()
         {
-            var index = Utils.indexprovincieinfo;
-            string[] ProvincieIdsVlaams = Utils.vlaamseProvincieIds;
-            List<string[]> strArrayProvincies = Utils.Provincies;
+            var index = Config.indexprovincieinfo;
+            string[] ProvincieIdsVlaams = Config.vlaamseProvincieIds;
+            List<string[]> strArrayProvincies = Config.Provincies;
             List<Provincie> provincies = new List<Provincie>();
 
             foreach (string stringId in ProvincieIdsVlaams)
             {
-
                 string provincieNaam = 
-                    strArrayProvincies.Where(p => 
-                    p[index["taalcode"]] == Utils.TaalCode && 
-                    p[index["provincieid"]] == stringId
-                    ).Select(p => p[index["provincienaam"]]).First();
+                    strArrayProvincies.Where(p => p[index["taalcode"]] == Config.TaalCode && 
+                    p[index["provincieid"]] == stringId).Select(p => p[index["provincienaam"]]).First();
 
                 int provincieId = int.Parse(stringId);
                 Provincie provincie = new Provincie(provincieId, provincieNaam);
-
                 provincies.Add(provincie);
             }
 

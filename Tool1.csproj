@@ -73,7 +73,7 @@
     <Compile Include="Punt.cs" />
     <Compile Include="Segment.cs" />
     <Compile Include="Straat.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Config.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
