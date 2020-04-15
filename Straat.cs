@@ -24,6 +24,7 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
+        #region methods
         public static List<Straat> GetStraatList(Gemeente gemeente)
         {
             var idindex = Config.indexwrgemeenteid;
@@ -69,5 +70,6 @@ namespace Prog3EindOpdracht
             sb.Append(Graaf.ToString());
             return sb.ToString();
         }
+        #endregion methods
     }
 }

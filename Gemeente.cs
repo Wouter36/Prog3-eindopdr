@@ -10,7 +10,7 @@ namespace Prog3EindOpdracht
         #region props
         private Provincie Provincie { get; set; }
         public int GemeenteId { get; set; }
-        public string GemeenteNaam { get; set; }
+        private string GemeenteNaam { get; set; }
         private List<Straat> straten = new List<Straat>();
         #endregion props
 
@@ -23,6 +23,7 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
+        #region methods
         public static List<Gemeente> GetGemeenteList(Provincie provincie)
         {
             var provincieindex = Config.indexprovincieinfo;
@@ -34,8 +35,7 @@ namespace Prog3EindOpdracht
 
             foreach (string[] strGemeente in strListGemeentes)
             {
-                bool isInProvincie = 
-                    Provincies.Any(p => 
+                bool isInProvincie = Provincies.Any(p => 
                     p[provincieindex["gemeenteid"]] == strGemeente[gemeenteindex["gemeenteid"]] &&
                     p[provincieindex["provincieid"]] == provincie.ProvincieID.ToString());
 
@@ -48,11 +48,10 @@ namespace Prog3EindOpdracht
                     gemeentes.Add(gemeente);
                 }
             }
-            foreach(Gemeente gemeente in gemeentes)
+            foreach (Gemeente gemeente in gemeentes)
             {
                 gemeente.straten = Straat.GetStraatList(gemeente);
             }
-
             return gemeentes;
         }
 
@@ -71,5 +70,6 @@ namespace Prog3EindOpdracht
 
             return sb.ToString();
         }
+        #endregion methods
     }
 }

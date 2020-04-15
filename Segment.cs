@@ -27,11 +27,11 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
-        private static void InitFullList(List<String[]> strDataList)
+        #region methods
+        private static void InitFullList()
         {
             var index = Config.indexwrdata;
-
-            foreach (string[] strData in strDataList)
+            foreach (string[] strData in Config.strListWRData)
             {
                 List<Punt> punten = new List<Punt>();
 
@@ -46,22 +46,18 @@ namespace Prog3EindOpdracht
                     xy = xy.Where(s => !string.IsNullOrEmpty(s)).ToArray();
                     decimal x = Convert.ToDecimal(xy[0], CultureInfo.InvariantCulture);
                     decimal y = Convert.ToDecimal(xy[1], CultureInfo.InvariantCulture);
-
                     Punt punt = new Punt(x, y);
                     punten.Add(punt);
                 }
                 int segmentId = int.Parse(strData[index["wegsegmentid"]]);
-                
                 int beginknoopId = int.Parse(strData[index["beginwegknoopid"]]);
                 Knoop beginKnoop = new Knoop(beginknoopId, punten.First());
-
                 int eindknoopId = int.Parse(strData[index["eindwegknoopid"]]);
                 Knoop eindKnoop = new Knoop(eindknoopId, punten.Last());
 
                 Segment segment = new Segment(segmentId, beginKnoop, eindKnoop, punten);
 
                 int straatId = int.Parse(strData[index["rechtsstraatnaamid"]]);
-
                 if (straatSegmentenDict.ContainsKey(straatId))
                 {
                     straatSegmentenDict[straatId].Add(segment);
@@ -75,21 +71,15 @@ namespace Prog3EindOpdracht
             }
         }
 
-        public static List<Segment> GetInstanceList(List<String[]> strDataList, int straatId)
+        public static List<Segment> GetSegmentList(int straatId)
         {
-            if(straatSegmentenDict.Count == 0)
-            {
-                InitFullList(strDataList);
-            }
+            if (straatSegmentenDict.Count == 0) 
+                InitFullList();
 
             if (straatSegmentenDict.ContainsKey(straatId))
-            {
                 return straatSegmentenDict[straatId];
-            }
             else
-            {
                 return new List<Segment>(); // Todo aanpassen? lijkt niet elegant
-            }
         }
 
         public override string ToString()
@@ -106,5 +96,6 @@ namespace Prog3EindOpdracht
             }
             return sb.ToString();
         }
+        #endregion methods
     }
 }

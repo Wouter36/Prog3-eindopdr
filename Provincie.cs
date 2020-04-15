@@ -10,7 +10,7 @@ namespace Prog3EindOpdracht
     {
         #region properties
         public int ProvincieID { get; set; }
-        private string Naam { get; set; }
+        public string Naam { get; set; }
         private List<Gemeente> Gemeentes = new List<Gemeente>();
         #endregion properties
 
@@ -22,7 +22,7 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
-
+        #region methods
         public static List<Provincie> GetProvincieList()
         {
             var index = Config.indexprovincieinfo;
@@ -63,5 +63,6 @@ namespace Prog3EindOpdracht
             }
             return sb.ToString();
         }
+        #endregion methods
     }
 }

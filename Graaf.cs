@@ -12,7 +12,6 @@ namespace Prog3EindOpdracht
         private static int HighestID;
         private int GraafId { get; set; }
         private Dictionary<Knoop, List<Segment>> KnoopSegmenten { get; set; }
-        private static List<string[]> strListData;
         #endregion properties
 
         #region constructor
@@ -23,19 +22,10 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
+        #region methods
         public static Graaf GetInstance(int straatId)
         {
-            var index = Config.indexwrdata;
-
-            if (strListData == null)
-            {
-                strListData = CSVReader.ReadCSV(Config.pathWRData, ';');
-                strListData = strListData.Where(line => 
-                    line[index["linksstraatnaamid"]] != "-9" && line[index["rechtsstraatnaamid"]] != "-9").ToList();
-                strListData.RemoveAt(0);
-            }
-
-            List<Segment> ontvangenSegmenten = Segment.GetInstanceList(strListData, straatId);
+            List<Segment> ontvangenSegmenten = Segment.GetSegmentList(straatId);
             Dictionary<Knoop, List<Segment>> tempKnoopSegmenten = new Dictionary<Knoop, List<Segment>>();
 
             foreach(Segment segment in ontvangenSegmenten)
@@ -51,7 +41,6 @@ namespace Prog3EindOpdracht
                     tempKnoopSegmenten.Add(segment.BeginKnoop, segmenten);
                 }
             }
-
             HighestID++;
             Graaf graaf = new Graaf(HighestID, tempKnoopSegmenten);
             
@@ -70,9 +59,9 @@ namespace Prog3EindOpdracht
                 {
                     sb.Append(segment.ToString());
                 }
-
             }
             return sb.ToString();
         }
+        #endregion methods
     }
 }
