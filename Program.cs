@@ -8,7 +8,7 @@ namespace Prog3EindOpdracht
     {
         static void Main(string[] args)
         {
-            Config.strListWRData = Config.du();
+            Config.strListWRData = Config.InitStrData();
             List<Provincie> provincies = new List<Provincie>();
 
             provincies = Provincie.GetProvincieList();
