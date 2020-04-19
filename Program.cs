@@ -24,9 +24,8 @@ namespace Prog3EindOpdracht
                 }
                 string text = sb.ToString();
                 System.IO.File.WriteAllText($"ProvincieFiles\\{provincie.Naam}.txt", text);
-
-                Rapport.Create();
             }
+            Rapport.Create();
 
             Console.WriteLine("Klaar!");
             Console.Read();

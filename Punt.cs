@@ -5,8 +5,8 @@ namespace Prog3EindOpdracht
 {
     class Punt
     {
-        private decimal X { get; set; }
-        private decimal Y { get; set; }
+        public decimal X { get; private set; }
+        public decimal Y { get; private set; }
 
         public Punt(decimal x, decimal y)
         {

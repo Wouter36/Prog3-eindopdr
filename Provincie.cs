@@ -21,7 +21,7 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
-
+        #region methods
         internal static List<Provincie> GetList()
         {
             if (provincies.Count == 0)
@@ -44,10 +44,8 @@ namespace Prog3EindOpdracht
 
                 provincies = provincieList;
             }
-
             return provincies;
         }
-
 
         public override string ToString()
         {
@@ -60,5 +58,6 @@ namespace Prog3EindOpdracht
             sb.Append(Environment.NewLine);
             return sb.ToString();
         }
+        #endregion methods
     }
 }

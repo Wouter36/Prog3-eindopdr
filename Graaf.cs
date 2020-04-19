@@ -11,7 +11,7 @@ namespace Prog3EindOpdracht
         #region properties
         private static int HighestID;
         private int GraafId { get; set; }
-        private Dictionary<Knoop, List<Segment>> KnoopSegmenten { get; set; }
+        public Dictionary<Knoop, List<Segment>> KnoopSegmenten { get; private set; }
         #endregion properties
 
         #region constructor

@@ -24,6 +24,7 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
+        #region methods
         public static List<Gemeente> GetList(Provincie provincie)
         {
             if(!gemeentes.ContainsKey(provincie))
@@ -68,5 +69,6 @@ namespace Prog3EindOpdracht
 
             return sb.ToString();
         }
+        #endregion methods
     }
 }

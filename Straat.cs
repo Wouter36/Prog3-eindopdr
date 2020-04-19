@@ -9,13 +9,11 @@ namespace Prog3EindOpdracht
     {
         #region properties
         private int StraatId { get; set; }
-        private string StraatNaam { get; set; }
-        private Graaf Graaf { get; set; }
+        public string StraatNaam { get; private set; }
+        public Graaf Graaf { get; private set; }
         public Gemeente Gemeente { get; set; }
         private static Dictionary<Gemeente, List<Straat>> gemeentestraten = new Dictionary<Gemeente, List<Straat>>();
         #endregion properties
-
-
 
         #region constructor
         private Straat(int straatID, string naam, Gemeente gemeente)
@@ -26,6 +24,7 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
+        #region methods
         public static List<Straat> GetList(Gemeente gemeente)
         {
             if (!gemeentestraten.ContainsKey(gemeente))
@@ -68,13 +67,15 @@ namespace Prog3EindOpdracht
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[straat]*");
+            sb.Append(Config.StraatLabel);
+            sb.Append(Config.Separator);
             sb.Append(StraatNaam);
-            sb.Append("*");
+            sb.Append(Config.Separator);
             sb.Append(StraatId);
             sb.Append(Environment.NewLine);
             sb.Append(Graaf.ToString());
             return sb.ToString();
         }
+        #endregion methods
     }
 }

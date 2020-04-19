@@ -13,7 +13,7 @@ namespace Prog3EindOpdracht
         public int SegmentId { get; private set; }
         public Knoop BeginKnoop { get; set; }
         public Knoop EindKnoop { get; set; }
-        private List<Punt> Punten { get; set; }
+        public List<Punt> Punten { get; private set; }
         private static Dictionary<int, List<Segment>> straatSegmentenDict = new Dictionary<int, List<Segment>>();
         #endregion properties
 
