@@ -20,7 +20,8 @@ namespace Prog3EindOpdracht
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[knoop]*");
+            sb.Append(Config.KnoopLabel);
+            sb.Append(Config.Separator);
             sb.Append(KnoopID);
             sb.Append(Environment.NewLine);
             sb.Append(punt.ToString());

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prog3EindOpdracht;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -16,7 +17,7 @@ namespace tool2
         {
             Ds = new DataSet();
             Ds.CaseSensitive = false;
-
+            
             DataTable provTbl = new DataTable("provincie");
             provTbl.Columns.Add(new DataColumn("ProvincieID", typeof(int)));
             provTbl.Columns.Add(new DataColumn("ProvincieNaam", typeof(string)));
@@ -58,7 +59,7 @@ namespace tool2
             Ds.Tables.Add(PuntTbl);
         }
 
-        public void readProvincies()
+        public void ReadProvincies()
         {
             DirectoryInfo d = new DirectoryInfo(@"ProvincieFiles");
             FileInfo[] Files = d.GetFiles("*.txt");
@@ -86,41 +87,41 @@ namespace tool2
             {
                 string[] elemnts = line.Split('*');
                 elemnts = elemnts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-
-                if (elemnts[0].StartsWith("[provincie]"))
+                
+                if (elemnts[0].StartsWith(Config.ProvincieLabel))
                 {
                     string provincieNaam = elemnts[1];
                     int provincieID = int.Parse(elemnts[2]);
                     Ds.Tables["provincie"].Rows.Add(provincieID, provincieNaam);
                     werkProvincieId = provincieID;
                 }
-                else if (elemnts[0].StartsWith("[gemeente]"))
+                else if (elemnts[0].StartsWith(Config.GemeenteLabel))
                 {
                     string gemeenteNaam = elemnts[1];
                     int gemeenteID = int.Parse(elemnts[2]);
                     Ds.Tables["gemeente"].Rows.Add(gemeenteID, gemeenteNaam, werkProvincieId);
                     werkGemeenteId = gemeenteID;
                 }
-                else if (elemnts[0].StartsWith("[straat]"))
+                else if (elemnts[0].StartsWith(Config.StraatLabel))
                 {
                     string straatNaam = elemnts[1];
                     int straatID = int.Parse(elemnts[2]);
                     Ds.Tables["straat"].Rows.Add(straatID, straatNaam, werkGemeenteId);
                     werkStraatId = straatID;
                 }
-                else if (elemnts[0].StartsWith("[graaf]"))
+                else if (elemnts[0].StartsWith(Config.GraafLabel))
                 {
                     int graafID = int.Parse(elemnts[1]);
                     Ds.Tables["graaf"].Rows.Add(graafID, werkStraatId);
                     werkGraafId = graafID;
                 }
-                else if (elemnts[0].StartsWith("[segment]"))
+                else if (elemnts[0].StartsWith(Config.SegmentLabel))
                 {
                     int segmentID = int.Parse(elemnts[1]);
                     Ds.Tables["segment"].Rows.Add(segmentID, werkGraafId);
                     werkSegmentId = segmentID;
                 }
-                else if (elemnts[0].StartsWith("[knoop]"))
+                else if (elemnts[0].StartsWith(Config.KnoopLabel))
                 {
                     int knoopID = int.Parse(elemnts[1]);
                     bool isNietAanwezig = (Ds.Tables["knoop"].Select($"KnoopID = {knoopID}").Length == 0);
@@ -130,7 +131,7 @@ namespace tool2
                         werkKnoopId = knoopID;
                     }
                 }
-                else if (elemnts[0].StartsWith("[punt]"))
+                else if (elemnts[0].StartsWith(Config.PuntLabel))
                 {
                     decimal x = Convert.ToDecimal(elemnts[1], CultureInfo.InvariantCulture);
                     decimal y = Convert.ToDecimal(elemnts[2], CultureInfo.InvariantCulture);
@@ -157,7 +158,6 @@ namespace tool2
                     foreach (DataTable d in Ds.Tables)
                     {
                         foreach (DataColumn c in d.Columns)
-                        sqlbc.ColumnMappings.Add(c.ColumnName, c.ColumnName);
                         sqlbc.DestinationTableName = d.TableName;
                         sqlbc.BulkCopyTimeout = 1800;
                         sqlbc.WriteToServer(d);

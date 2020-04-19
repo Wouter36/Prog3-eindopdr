@@ -17,9 +17,10 @@ namespace Prog3EindOpdracht
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[punt]*");
+            sb.Append(Config.PuntLabel);
+            sb.Append(Config.Separator);
             sb.Append(X);
-            sb.Append("*");
+            sb.Append(Config.Separator);
             sb.Append(Y);
             sb.Append(Environment.NewLine);
 

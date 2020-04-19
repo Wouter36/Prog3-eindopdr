@@ -73,19 +73,27 @@ namespace Prog3EindOpdracht
 
         public static List<Segment> GetSegmentList(int straatId)
         {
-            if (straatSegmentenDict.Count == 0) 
+            if (straatSegmentenDict.Count == 0)
+            {
                 InitFullList();
+            }
+
 
             if (straatSegmentenDict.ContainsKey(straatId))
+            {
                 return straatSegmentenDict[straatId];
+            }
             else
+            {
                 return new List<Segment>(); // Todo aanpassen? lijkt niet elegant
+            }
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[segment]*");
+            sb.Append(Config.SegmentLabel);
+            sb.Append(Config.Separator);
             sb.Append(SegmentId);
             sb.Append(Environment.NewLine);
             sb.Append(BeginKnoop.ToString());

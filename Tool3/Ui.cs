@@ -51,11 +51,12 @@ namespace Tool3
             string connectionString = ConfigurationManager.ConnectionStrings["connectStr"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string gemeenteSql = $"SELECT GemeenteID FROM gemeente WHERE GemeenteNaam = '{gemeenteNaam}';";
-                int gemeenteID;
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand(gemeenteSql, conn))
+                try
                 {
+                    string gemeenteSql = $"SELECT GemeenteID FROM gemeente WHERE GemeenteNaam = '{gemeenteNaam}';";
+                    int gemeenteID;
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(gemeenteSql, conn);
                     gemeenteID = (int)cmd.ExecuteScalar();
                     cmd.CommandText = $"SELECT StraatNaam FROM straat WHERE GemeenteID = '{gemeenteID}' ORDER BY StraatNaam ASC;";
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -71,8 +72,18 @@ namespace Tool3
                     {
                         Console.WriteLine("Niets gevonden");
                     }
+                }               
+                catch (Exception e)
+                {
+                    Console.WriteLine("Er is een probleem opgetreden.");
+                    Console.WriteLine("Ben je zeker dat je alles juist hebt ingevoerd");
+                    Console.WriteLine("Fout: " + e.Message);
                 }
-                conn.Close();
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
             }
         }
 
@@ -87,12 +98,22 @@ namespace Tool3
                 string sql = $"SELECT StraatID FROM straat WHERE StraatNaam = '{straatNaam}';";
                 int straatID;
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                {
+                try {
+                    SqlCommand cmd = new SqlCommand(sql, conn);
                     straatID = (int)cmd.ExecuteScalar();
-                };
-
-                Console.WriteLine(straatID);
+                    Console.WriteLine(straatID);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Er is een probleem opgetreden.");
+                    Console.WriteLine("Ben je zeker dat je alles juist hebt ingevoerd");
+                    Console.WriteLine("Fout: " + e.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
             }
         }
 
@@ -187,7 +208,7 @@ namespace Tool3
 
         private static void GeefStraatIDsVanGemeenteNaam()
         {
-            Console.WriteLine("Geef de stadsnaam");
+            Console.WriteLine("Geef de gemeentenaam");
             string gemeenteNaam = Console.ReadLine();
 
             string connectionString = ConfigurationManager.ConnectionStrings["connectStr"].ConnectionString;
@@ -196,8 +217,9 @@ namespace Tool3
                 string gemeenteSql = $"SELECT GemeenteID FROM gemeente WHERE GemeenteNaam = '{gemeenteNaam}';";
                 int gemeenteID;
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand(gemeenteSql, conn))
+                try
                 {
+                    SqlCommand cmd = new SqlCommand(gemeenteSql, conn);
                     gemeenteID = (int)cmd.ExecuteScalar();
                     cmd.CommandText = $"SELECT StraatID FROM straat WHERE GemeenteID = '{gemeenteID}';";
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -213,7 +235,17 @@ namespace Tool3
                         Console.WriteLine("Niets gevonden");
                     }
                 }
-                conn.Close();
+                catch (Exception e)
+                {
+                    Console.WriteLine("Er is een probleem opgetreden.");
+                    Console.WriteLine("Ben je zeker dat je alles juist hebt ingevoerd");
+                    Console.WriteLine("Fout: " + e.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
             }
         }
     }

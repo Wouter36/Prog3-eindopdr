@@ -9,9 +9,10 @@ namespace Prog3EindOpdracht
     {
         #region props
         private Provincie Provincie { get; set; }
-        public int GemeenteId { get; set; }
-        private string GemeenteNaam { get; set; }
-        private List<Straat> straten = new List<Straat>();
+        public int GemeenteId { get; private set; }
+        public string GemeenteNaam { get; private set; }
+        private static Dictionary<Provincie, List<Gemeente>> gemeentes = new Dictionary<Provincie, List<Gemeente>>();
+
         #endregion props
 
         #region constructor
@@ -23,53 +24,49 @@ namespace Prog3EindOpdracht
         }
         #endregion constructor
 
-        #region methods
-        public static List<Gemeente> GetGemeenteList(Provincie provincie)
+        public static List<Gemeente> GetList(Provincie provincie)
         {
-            var provincieindex = Config.indexprovincieinfo;
-            var gemeenteindex = Config.indexwrgemeentenaam;
-            List<string[]> strListGemeentes = Config.strListGemeentes;
-            List<string[]> Provincies = Config.Provincies;
-
-            List<Gemeente> gemeentes = new List<Gemeente>();
-
-            foreach (string[] strGemeente in strListGemeentes)
+            if(!gemeentes.ContainsKey(provincie))
             {
-                bool isInProvincie = Provincies.Any(p => 
-                    p[provincieindex["gemeenteid"]] == strGemeente[gemeenteindex["gemeenteid"]] &&
-                    p[provincieindex["provincieid"]] == provincie.ProvincieID.ToString());
+                var provincieindex = Config.indexprovincieinfo;
+                var gemeenteindex = Config.indexwrgemeentenaam;
+                List<string[]> strListGemeentes = Config.strListGemeentes;
+                List<string[]> Provincies = Config.Provincies;
 
-                if (strGemeente[2] == Config.TaalCode && isInProvincie)
+                List<Gemeente> gemeenteList = new List<Gemeente>();
+
+                foreach (string[] strGemeente in strListGemeentes)
                 {
-                    int gemeenteId = int.Parse(strGemeente[gemeenteindex["gemeenteid"]]);
-                    string gemeenteNaam = strGemeente[gemeenteindex["gemeentenaam"]];
-                    gemeenteNaam = gemeenteNaam.Trim(); // kan soms whitespace bevatten
-                    Gemeente gemeente = new Gemeente(gemeenteId, provincie, gemeenteNaam);
-                    gemeentes.Add(gemeente);
+                    bool isInProvincie = Provincies.Any(p =>
+                        p[provincieindex["gemeenteid"]] == strGemeente[gemeenteindex["gemeenteid"]] &&
+                        p[provincieindex["provincieid"]] == provincie.ProvincieID.ToString());
+
+                    if (strGemeente[2] == Config.TaalCode && isInProvincie)
+                    {
+                        int gemeenteId = int.Parse(strGemeente[gemeenteindex["gemeenteid"]]);
+                        string gemeenteNaam = strGemeente[gemeenteindex["gemeentenaam"]];
+                        gemeenteNaam = gemeenteNaam.Trim(); // kan soms whitespace bevatten
+                        Gemeente gemeente = new Gemeente(gemeenteId, provincie, gemeenteNaam);
+                        gemeenteList.Add(gemeente);
+                    }
                 }
+                gemeentes.Add(provincie, gemeenteList);
             }
-            foreach (Gemeente gemeente in gemeentes)
-            {
-                gemeente.straten = Straat.GetStraatList(gemeente);
-            }
-            return gemeentes;
+
+            return gemeentes[provincie];
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[gemeente]*");
+            sb.Append(Config.GemeenteLabel);
+            sb.Append(Config.Separator);
             sb.Append(GemeenteNaam);
-            sb.Append("*");
+            sb.Append(Config.Separator);
             sb.Append(GemeenteId);
             sb.Append(Environment.NewLine);
-            foreach (Straat straat in straten)
-            {
-                sb.Append(straat.ToString());
-            }
 
             return sb.ToString();
         }
-        #endregion methods
     }
 }

@@ -12,7 +12,7 @@ namespace tool2
         static void Main(string[] args)
         {
             DbAdd dbadd = new DbAdd();
-            dbadd.readProvincies();
+            dbadd.ReadProvincies();
             Console.WriteLine("Klaar!");
             Console.Read();
         }

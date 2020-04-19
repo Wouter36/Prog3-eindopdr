@@ -50,7 +50,8 @@ namespace Prog3EindOpdracht
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[graaf]*");
+            sb.Append(Config.GraafLabel);
+            sb.Append(Config.Separator);
             sb.Append(GraafId);
             sb.Append(Environment.NewLine);
             foreach (KeyValuePair<Knoop, List<Segment>> kvp in KnoopSegmenten)

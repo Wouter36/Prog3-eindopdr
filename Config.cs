@@ -6,9 +6,20 @@ using System.Threading.Tasks;
 
 namespace Prog3EindOpdracht
 {
-    class Config
+    public class Config
     {
         public const string TaalCode = "nl";
+
+        #region info voor het wegschrijven
+        public const string Separator = "*";
+        public const string ProvincieLabel = "[provincie]";
+        public const string GemeenteLabel = "[gemeente]";
+        public const string StraatLabel = "[straat]";
+        public const string GraafLabel = "[graaf]";
+        public const string SegmentLabel = "[segment]";
+        public const string KnoopLabel = "[knoop]";
+        public const string PuntLabel = "[punt]";
+        #endregion info voor het wegschrijven
 
         #region fileinhoud
         public static string[] vlaamseProvincieIds = CSVReader.ReadCSV(pathVlaamseProvincies, ',').First();

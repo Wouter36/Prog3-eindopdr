@@ -55,5 +55,11 @@
     <Content Include="remove.sql" />
     <Content Include="TableInit.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tool1.csproj">
+      <Project>{0b735101-dc7a-426e-a344-377e736d6fec}</Project>
+      <Name>Tool1</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
